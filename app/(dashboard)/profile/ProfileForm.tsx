@@ -137,7 +137,7 @@ export function ProfileForm({ user }: ProfileFormProps) {
                 required
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-zinc-100 text-sm focus:outline-none focus:border-emerald-500 transition-colors"
+                className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-zinc-100 text-base md:text-sm focus:outline-none focus:border-emerald-500 transition-colors"
               />
             </div>
 
@@ -148,7 +148,7 @@ export function ProfileForm({ user }: ProfileFormProps) {
               <select
                 value={gender}
                 onChange={(e) => setGender(e.target.value)}
-                className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-zinc-100 text-sm focus:outline-none focus:border-emerald-500 transition-colors"
+                className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-zinc-100 text-base md:text-sm focus:outline-none focus:border-emerald-500 transition-colors"
               >
                 <option value="masculino">Masculino</option>
                 <option value="feminino">Feminino</option>
@@ -166,7 +166,7 @@ export function ProfileForm({ user }: ProfileFormProps) {
                 required
                 value={weight}
                 onChange={(e) => setWeight(e.target.value)}
-                className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-zinc-100 text-sm focus:outline-none focus:border-emerald-500 transition-colors"
+                className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-zinc-100 text-base md:text-sm focus:outline-none focus:border-emerald-500 transition-colors"
               />
             </div>
 
@@ -179,7 +179,7 @@ export function ProfileForm({ user }: ProfileFormProps) {
                 required
                 value={height}
                 onChange={(e) => setHeight(e.target.value)}
-                className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-zinc-100 text-sm focus:outline-none focus:border-emerald-500 transition-colors"
+                className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-zinc-100 text-base md:text-sm focus:outline-none focus:border-emerald-500 transition-colors"
               />
             </div>
 
@@ -192,7 +192,7 @@ export function ProfileForm({ user }: ProfileFormProps) {
                 required
                 value={age}
                 onChange={(e) => setAge(e.target.value)}
-                className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-zinc-100 text-sm focus:outline-none focus:border-emerald-500 transition-colors"
+                className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-zinc-100 text-base md:text-sm focus:outline-none focus:border-emerald-500 transition-colors"
               />
             </div>
 
@@ -203,7 +203,7 @@ export function ProfileForm({ user }: ProfileFormProps) {
               <select
                 value={goal}
                 onChange={(e) => setGoal(e.target.value)}
-                className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-zinc-100 text-sm focus:outline-none focus:border-emerald-500 transition-colors"
+                className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-zinc-100 text-base md:text-sm focus:outline-none focus:border-emerald-500 transition-colors"
               >
                 <option value="perder">Perder peso (-500 kcal)</option>
                 <option value="manter">Manter peso (Equilíbrio)</option>
@@ -242,7 +242,7 @@ export function ProfileForm({ user }: ProfileFormProps) {
                 disabled={isAutoCalorie}
                 value={dailyCalories}
                 onChange={(e) => setDailyCalories(e.target.value)}
-                className="w-full bg-zinc-950 border border-zinc-800 disabled:border-zinc-900 disabled:text-zinc-500 rounded-xl px-4 py-3 text-zinc-100 text-sm focus:outline-none focus:border-emerald-500 transition-colors"
+                className="w-full bg-zinc-950 border border-zinc-800 disabled:border-zinc-900 disabled:text-zinc-500 rounded-xl px-4 py-3 text-zinc-100 text-base md:text-sm focus:outline-none focus:border-emerald-500 transition-colors"
               />
             </div>
           </div>

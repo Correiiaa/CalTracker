@@ -626,7 +626,7 @@ export default function AddMealPage() {
                     type="text"
                     value={customName}
                     onChange={(e) => setCustomName(e.target.value)}
-                    className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2.5 text-zinc-100 text-xs focus:outline-none focus:border-emerald-500 transition-colors"
+                    className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2.5 text-zinc-100 text-base md:text-xs focus:outline-none focus:border-emerald-500 transition-colors"
                     placeholder="Ex: Whey Isolate, Barra de Proteína..."
                   />
                 </div>
@@ -640,7 +640,7 @@ export default function AddMealPage() {
                       type="number"
                       value={customWeight || ""}
                       onChange={(e) => setCustomWeight(parseFloat(e.target.value) || 0)}
-                      className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2.5 text-zinc-100 text-xs focus:outline-none focus:border-emerald-500 transition-colors"
+                      className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2.5 text-zinc-100 text-base md:text-xs focus:outline-none focus:border-emerald-500 transition-colors"
                       placeholder="Ex: 100"
                     />
                   </div>
@@ -655,7 +655,7 @@ export default function AddMealPage() {
                         const val = e.target.value;
                         setCustomCaloriesPer100g(val === "" ? "" : parseFloat(val));
                       }}
-                      className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2.5 text-zinc-100 text-xs focus:outline-none focus:border-emerald-500 transition-colors"
+                      className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2.5 text-zinc-100 text-base md:text-xs focus:outline-none focus:border-emerald-500 transition-colors"
                       placeholder="Ex: 350"
                     />
                   </div>
@@ -673,7 +673,7 @@ export default function AddMealPage() {
                         const val = e.target.value;
                         setCustomProteinPer100g(val === "" ? "" : parseFloat(val));
                       }}
-                      className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-2 py-2.5 text-zinc-100 text-xs focus:outline-none focus:border-emerald-500 transition-colors"
+                      className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-2 py-2.5 text-zinc-100 text-base md:text-xs focus:outline-none focus:border-emerald-500 transition-colors"
                       placeholder="Ex: 25"
                     />
                   </div>
@@ -688,7 +688,7 @@ export default function AddMealPage() {
                         const val = e.target.value;
                         setCustomCarbsPer100g(val === "" ? "" : parseFloat(val));
                       }}
-                      className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-2 py-2.5 text-zinc-100 text-xs focus:outline-none focus:border-emerald-500 transition-colors"
+                      className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-2 py-2.5 text-zinc-100 text-base md:text-xs focus:outline-none focus:border-emerald-500 transition-colors"
                       placeholder="Ex: 5"
                     />
                   </div>
@@ -703,7 +703,7 @@ export default function AddMealPage() {
                         const val = e.target.value;
                         setCustomFatPer100g(val === "" ? "" : parseFloat(val));
                       }}
-                      className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-2 py-2.5 text-zinc-100 text-xs focus:outline-none focus:border-emerald-500 transition-colors"
+                      className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-2 py-2.5 text-zinc-100 text-base md:text-xs focus:outline-none focus:border-emerald-500 transition-colors"
                       placeholder="Ex: 2"
                     />
                   </div>

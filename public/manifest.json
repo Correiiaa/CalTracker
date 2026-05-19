@@ -1,0 +1,17 @@
+{
+  "name": "CalTracker - Contador de Calorias",
+  "short_name": "CalTracker",
+  "description": "Acompanhe as suas calorias e macronutrientes com Inteligência Artificial.",
+  "start_url": "/dashboard",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#09090b",
+  "theme_color": "#09090b",
+  "icons": [
+    {
+      "src": "/icon",
+      "sizes": "32x32",
+      "type": "image/png"
+    }
+  ]
+}

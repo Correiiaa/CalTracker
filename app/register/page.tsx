@@ -114,7 +114,7 @@ export default function RegisterPage() {
                     required
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-zinc-100 text-sm focus:outline-none focus:border-emerald-500 transition-colors"
+                    className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-zinc-100 text-base md:text-sm focus:outline-none focus:border-emerald-500 transition-colors"
                     placeholder="Seu Nome"
                   />
                 </div>
@@ -128,7 +128,7 @@ export default function RegisterPage() {
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-zinc-100 text-sm focus:outline-none focus:border-emerald-500 transition-colors"
+                    className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-zinc-100 text-base md:text-sm focus:outline-none focus:border-emerald-500 transition-colors"
                     placeholder="nome@exemplo.com"
                   />
                 </div>
@@ -143,7 +143,7 @@ export default function RegisterPage() {
                     minLength={6}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-zinc-100 text-sm focus:outline-none focus:border-emerald-500 transition-colors"
+                    className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-zinc-100 text-base md:text-sm focus:outline-none focus:border-emerald-500 transition-colors"
                     placeholder="••••••••"
                   />
                 </div>
@@ -155,7 +155,7 @@ export default function RegisterPage() {
                   <select
                     value={gender}
                     onChange={(e) => setGender(e.target.value)}
-                    className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-zinc-100 text-sm focus:outline-none focus:border-emerald-500 transition-colors"
+                    className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-zinc-100 text-base md:text-sm focus:outline-none focus:border-emerald-500 transition-colors"
                   >
                     <option value="masculino">Masculino</option>
                     <option value="feminino">Feminino</option>
@@ -180,7 +180,7 @@ export default function RegisterPage() {
                     required
                     value={weight}
                     onChange={(e) => setWeight(e.target.value)}
-                    className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-zinc-100 text-sm focus:outline-none focus:border-emerald-500 transition-colors"
+                    className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-zinc-100 text-base md:text-sm focus:outline-none focus:border-emerald-500 transition-colors"
                     placeholder="Ex: 75.5"
                   />
                 </div>
@@ -194,7 +194,7 @@ export default function RegisterPage() {
                     required
                     value={height}
                     onChange={(e) => setHeight(e.target.value)}
-                    className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-zinc-100 text-sm focus:outline-none focus:border-emerald-500 transition-colors"
+                    className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-zinc-100 text-base md:text-sm focus:outline-none focus:border-emerald-500 transition-colors"
                     placeholder="Ex: 175"
                   />
                 </div>
@@ -208,7 +208,7 @@ export default function RegisterPage() {
                     required
                     value={age}
                     onChange={(e) => setAge(e.target.value)}
-                    className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-zinc-100 text-sm focus:outline-none focus:border-emerald-500 transition-colors"
+                    className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-zinc-100 text-base md:text-sm focus:outline-none focus:border-emerald-500 transition-colors"
                     placeholder="Ex: 28"
                   />
                 </div>
@@ -220,7 +220,7 @@ export default function RegisterPage() {
                   <select
                     value={goal}
                     onChange={(e) => setGoal(e.target.value)}
-                    className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-zinc-100 text-sm focus:outline-none focus:border-emerald-500 transition-colors"
+                    className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-zinc-100 text-base md:text-sm focus:outline-none focus:border-emerald-500 transition-colors"
                   >
                     <option value="perder">Perder Peso (Défice)</option>
                     <option value="manter">Manter Peso (Equilíbrio)</option>
