@@ -1,0 +1,60 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id            String       @id @default(cuid())
+  name          String
+  email         String       @unique
+  password      String
+  weight        Float        // in kg
+  height        Float        // in cm
+  age           Int
+  gender        String       // e.g. "masculino", "feminino", "outro"
+  goal          String       // e.g. "perder", "manter", "ganhar"
+  dailyCalories Int          // target daily calories
+  autoCalories  Boolean      @default(true)
+  meals         Meal[]
+  aiAnalyses    AIAnalysis[]
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+}
+
+model Meal {
+  id            String     @id @default(cuid())
+  userId        String
+  name          String     // e.g. "Almoço", "Pequeno-almoço"
+  date          DateTime   @default(now())
+  totalCalories Int
+  user          User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  foodItems     FoodItem[]
+  createdAt     DateTime   @default(now())
+}
+
+model FoodItem {
+  id          String   @id @default(cuid())
+  mealId      String
+  name        String
+  weightGrams Float
+  calories    Float    // calculated for this weight
+  protein     Float    // calculated for this weight
+  fat         Float    // calculated for this weight
+  carbs       Float    // calculated for this weight
+  meal        Meal     @relation(fields: [mealId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+}
+
+model AIAnalysis {
+  id             String   @id @default(cuid())
+  userId         String
+  imageUrl       String
+  geminiResponse String   // JSON response from Gemini
+  confidence     Float
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt      DateTime @default(now())
+}

@@ -1,0 +1,61 @@
+export interface CommonFood {
+  name: string;
+  calories: number;
+  protein: number;
+  fat: number;
+  carbs: number;
+}
+
+export const COMMON_FOODS: CommonFood[] = [
+  { name: "Arroz branco cozido", calories: 130, protein: 2.7, fat: 0.3, carbs: 28 },
+  { name: "Arroz integral cozido", calories: 111, protein: 2.6, fat: 0.9, carbs: 23 },
+  { name: "Peito de frango grelhado", calories: 165, protein: 31, fat: 3.6, carbs: 0 },
+  { name: "Peito de frango cru", calories: 120, protein: 22.5, fat: 2.6, carbs: 0 },
+  { name: "Carne de vaca grelhada", calories: 250, protein: 26, fat: 15, carbs: 0 },
+  { name: "Carne de porco grelhada", calories: 240, protein: 27, fat: 14, carbs: 0 },
+  { name: "Ovo cozido", calories: 155, protein: 13, fat: 11, carbs: 1.1 },
+  { name: "Ovo estrelado", calories: 196, protein: 13.6, fat: 14.8, carbs: 0.9 },
+  { name: "Clara de ovo", calories: 52, protein: 11, fat: 0.2, carbs: 0.7 },
+  { name: "Batata doce cozida", calories: 86, protein: 1.6, fat: 0.1, carbs: 20 },
+  { name: "Batata inglesa cozida", calories: 87, protein: 2, fat: 0.1, carbs: 20 },
+  { name: "Batata frita", calories: 312, protein: 3.4, fat: 15, carbs: 41 },
+  { name: "Aveia em flocos", calories: 389, protein: 16.9, fat: 6.9, carbs: 66 },
+  { name: "Banana", calories: 89, protein: 1.1, fat: 0.3, carbs: 23 },
+  { name: "Maçã", calories: 52, protein: 0.3, fat: 0.2, carbs: 14 },
+  { name: "Laranja", calories: 47, protein: 0.9, fat: 0.1, carbs: 12 },
+  { name: "Morango", calories: 32, protein: 0.7, fat: 0.3, carbs: 7.7 },
+  { name: "Abacate", calories: 160, protein: 2, fat: 15, carbs: 9 },
+  { name: "Pão integral", calories: 247, protein: 13, fat: 3.4, carbs: 41 },
+  { name: "Pão branco / carcaça", calories: 265, protein: 9, fat: 3.2, carbs: 49 },
+  { name: "Leite meio-gordo", calories: 47, protein: 3.3, fat: 1.6, carbs: 4.8 },
+  { name: "Leite magro", calories: 35, protein: 3.4, fat: 0.1, carbs: 5 },
+  { name: "Leite gordo", calories: 61, protein: 3.2, fat: 3.2, carbs: 4.8 },
+  { name: "Azeite de oliva", calories: 884, protein: 0, fat: 100, carbs: 0 },
+  { name: "Manteiga", calories: 717, protein: 0.9, fat: 81, carbs: 0.1 },
+  { name: "Queijo flamengo", calories: 350, protein: 25, fat: 28, carbs: 1 },
+  { name: "Queijo fresco", calories: 100, protein: 12, fat: 5, carbs: 3 },
+  { name: "Fiambre de peru", calories: 100, protein: 17, fat: 2, carbs: 3 },
+  { name: "Salmão grelhado", calories: 206, protein: 22, fat: 12, carbs: 0 },
+  { name: "Atum em lata (natural)", calories: 116, protein: 26, fat: 1, carbs: 0 },
+  { name: "Atum em lata (óleo)", calories: 198, protein: 24, fat: 11, carbs: 0 },
+  { name: "Massa cozida", calories: 158, protein: 5.8, fat: 0.9, carbs: 31 },
+  { name: "Feijão preto cozido", calories: 132, protein: 8.9, fat: 0.5, carbs: 23.7 },
+  { name: "Grão de bico cozido", calories: 164, protein: 8.9, fat: 2.6, carbs: 27 },
+  { name: "Alface", calories: 15, protein: 1.4, fat: 0.2, carbs: 2.9 },
+  { name: "Tomate", calories: 18, protein: 0.9, fat: 0.2, carbs: 3.9 },
+  { name: "Brócolos cozidos", calories: 35, protein: 2.4, fat: 0.4, carbs: 7 },
+  { name: "Cenoura crua", calories: 41, protein: 0.9, fat: 0.2, carbs: 10 },
+  { name: "Espinafres cozidos", calories: 23, protein: 3, fat: 0.3, carbs: 3.8 },
+  { name: "Whey Protein (pó)", calories: 390, protein: 80, fat: 3, carbs: 8 },
+  { name: "Iogurte grego natural", calories: 115, protein: 9, fat: 8, carbs: 3 },
+  { name: "Iogurte natural magro", calories: 45, protein: 4, fat: 0.1, carbs: 6 },
+  { name: "Amêndoas", calories: 579, protein: 21, fat: 50, carbs: 22 },
+  { name: "Nozes", calories: 654, protein: 15, fat: 65, carbs: 14 },
+  { name: "Chocolate negro (70%+)", calories: 600, protein: 8, fat: 43, carbs: 46 },
+  { name: "Presunto", calories: 230, protein: 30, fat: 12, carbs: 1 },
+  { name: "Pescada cozida", calories: 95, protein: 20, fat: 1.5, carbs: 0 },
+  { name: "Mel", calories: 304, protein: 0.3, fat: 0, carbs: 82 },
+  { name: "Açúcar branco", calories: 387, protein: 0, fat: 0, carbs: 100 },
+  { name: "Tapioca", calories: 350, protein: 0, fat: 0, carbs: 87 },
+  { name: "Café (sem açúcar)", calories: 2, protein: 0.1, fat: 0, carbs: 0 }
+];
