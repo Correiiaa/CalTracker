@@ -471,7 +471,7 @@ export default function AddMealPage() {
                   type="datetime-local"
                   value={mealDate}
                   onChange={(e) => setMealDate(e.target.value)}
-                  className="w-full max-w-full min-w-0 bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2.5 text-zinc-100 text-base md:text-sm focus:outline-none focus:border-emerald-500 transition-colors block box-border"
+                  className="w-2/3 max-w-full min-w-0 bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2.5 text-zinc-100 text-base md:text-sm focus:outline-none focus:border-emerald-500 transition-colors block box-border"
                 />
               </div>
             </div>

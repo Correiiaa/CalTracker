@@ -183,27 +183,27 @@ export function HistoryView({ user, initialChartData }: HistoryViewProps) {
         </div>
 
         {/* Fita Seletora de Dias Rápidos */}
-        <div className="rounded-3xl bg-zinc-900 border border-zinc-800 p-5 shadow-2xl">
+        <div className="rounded-3xl bg-zinc-900 border border-zinc-800 p-4 sm:p-5 shadow-2xl">
           <h3 className="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-4">
             Selecionar Data
           </h3>
-          <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
+          <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
             <div className="relative w-full sm:w-auto min-w-0">
-              <CalendarIcon className="absolute left-3 top-3 h-4.5 w-4.5 text-zinc-500 pointer-events-none" />
+              <CalendarIcon className="absolute left-2.5 top-2.5 h-4 w-4 text-zinc-500 pointer-events-none" />
               <input
                 type="date"
                 value={selectedDate}
                 onChange={(e) => setSelectedDate(e.target.value)}
-                className="w-full max-w-full min-w-0 bg-zinc-950 border border-zinc-800 rounded-2xl pl-9 pr-3 py-2.5 text-zinc-100 text-base md:text-sm focus:outline-none focus:border-emerald-500 transition-colors block box-border"
+                className="w-full max-w-full min-w-0 bg-zinc-950 border border-zinc-800 rounded-xl pl-8 pr-2 py-2 text-zinc-100 text-xs sm:text-sm focus:outline-none focus:border-emerald-500 transition-colors block box-border"
               />
             </div>
             
             {/* Botões Rápidos */}
-            <div className="flex gap-2 w-full sm:w-auto justify-end">
+            <div className="flex gap-2 w-full sm:w-auto justify-stretch sm:justify-end">
               <button
                 type="button"
                 onClick={() => setSelectedDate(new Date().toISOString().split("T")[0])}
-                className={`px-4 py-2.5 rounded-xl text-xs font-bold border transition-all ${
+                className={`flex-1 sm:flex-none px-3.5 py-2 rounded-xl text-xs font-bold border transition-all text-center ${
                   selectedDate === new Date().toISOString().split("T")[0]
                     ? "bg-zinc-800 text-emerald-400 border-zinc-700"
                     : "bg-zinc-950 text-zinc-400 border-zinc-850 hover:text-zinc-200"
@@ -218,7 +218,7 @@ export function HistoryView({ user, initialChartData }: HistoryViewProps) {
                   yesterday.setDate(yesterday.getDate() - 1);
                   setSelectedDate(yesterday.toISOString().split("T")[0]);
                 }}
-                className={`px-4 py-2.5 rounded-xl text-xs font-bold border transition-all ${
+                className={`flex-1 sm:flex-none px-3.5 py-2 rounded-xl text-xs font-bold border transition-all text-center ${
                   selectedDate === new Date(Date.now() - 86400000).toISOString().split("T")[0]
                     ? "bg-zinc-800 text-emerald-400 border-zinc-700"
                     : "bg-zinc-950 text-zinc-400 border-zinc-850 hover:text-zinc-200"
