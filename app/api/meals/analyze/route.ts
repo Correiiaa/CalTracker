@@ -5,32 +5,44 @@ import { getSessionUserId } from "@/lib/auth";
 import { parseMealText, analyzeMealImage, processNutritionAnalysis } from "@/lib/nutrition";
 import { prisma } from "@/lib/prisma";
 
+export const maxDuration = 60;
+
 // Função para guardar imagem Base64 localmente
 function saveBase64Image(base64Str: string): string {
-  const matches = base64Str.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
-  let ext = "jpg";
-  let buffer: Buffer;
-
-  if (matches && matches.length === 3) {
-    const mime = matches[1];
-    buffer = Buffer.from(matches[2], "base64");
-    if (mime === "image/png") ext = "png";
-    else if (mime === "image/gif") ext = "gif";
-    else if (mime === "image/webp") ext = "webp";
-  } else {
-    buffer = Buffer.from(base64Str, "base64");
+  // O ambiente Vercel é Read-Only. Não podemos guardar no disco.
+  if (process.env.VERCEL || process.env.NODE_ENV === "production") {
+    return "";
   }
 
-  const uploadDir = path.join(process.cwd(), "public", "uploads");
-  if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir, { recursive: true });
+  try {
+    const matches = base64Str.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
+    let ext = "jpg";
+    let buffer: Buffer;
+
+    if (matches && matches.length === 3) {
+      const mime = matches[1];
+      buffer = Buffer.from(matches[2], "base64");
+      if (mime === "image/png") ext = "png";
+      else if (mime === "image/gif") ext = "gif";
+      else if (mime === "image/webp") ext = "webp";
+    } else {
+      buffer = Buffer.from(base64Str, "base64");
+    }
+
+    const uploadDir = path.join(process.cwd(), "public", "uploads");
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir, { recursive: true });
+    }
+
+    const fileName = `meal-${Date.now()}-${Math.random().toString(36).substring(2, 9)}.${ext}`;
+    const filePath = path.join(uploadDir, fileName);
+    fs.writeFileSync(filePath, buffer);
+
+    return `/uploads/${fileName}`;
+  } catch (error) {
+    console.error("Erro ao guardar imagem localmente:", error);
+    return "";
   }
-
-  const fileName = `meal-${Date.now()}-${Math.random().toString(36).substring(2, 9)}.${ext}`;
-  const filePath = path.join(uploadDir, fileName);
-  fs.writeFileSync(filePath, buffer);
-
-  return `/uploads/${fileName}`;
 }
 
 export async function POST(request: Request) {
