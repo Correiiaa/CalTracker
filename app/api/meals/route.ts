@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getSessionUserId } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { saveSharedFoods } from "@/lib/sharedFoods";
 
 // Criar refeição
 export async function POST(request: Request) {
@@ -48,6 +49,9 @@ export async function POST(request: Request) {
         foodItems: true,
       },
     });
+
+    // Guardar alimentos na base de dados partilhada global
+    await saveSharedFoods(foodItems);
 
     return NextResponse.json({
       message: "Refeição guardada com sucesso.",

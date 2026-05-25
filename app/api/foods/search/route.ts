@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
-import { searchUSDAFoods } from "@/lib/nutrition";
 import { getCurrentUser } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
+import { COMMON_FOODS } from "@/lib/commonFoods";
 
 export async function GET(request: Request) {
   const user = await getCurrentUser();
@@ -15,10 +16,56 @@ export async function GET(request: Request) {
     return NextResponse.json({ foods: [] });
   }
 
+  const cleanQuery = query.trim().toLowerCase();
+
   try {
-    const foods = await searchUSDAFoods(query);
+    // 1. Pesquisa na base de dados global (SharedFood)
+    const sharedFoods = await prisma.sharedFood.findMany({
+      where: {
+        name: {
+          contains: cleanQuery,
+          mode: "insensitive",
+        },
+      },
+      take: 20,
+    });
+
+    const mappedShared = sharedFoods.map((food) => ({
+      id: food.id,
+      name: food.name,
+      source: "Global" as const,
+      caloriesPer100g: food.caloriesPer100g,
+      proteinPer100g: food.proteinPer100g,
+      fatPer100g: food.fatPer100g,
+      carbsPer100g: food.carbsPer100g,
+    }));
+
+    // 2. Pesquisa nos alimentos padrão locais (COMMON_FOODS)
+    const removeAccents = (str: string) =>
+      str.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+    const cleanQueryNoAccents = removeAccents(cleanQuery);
+
+    const localMatches = COMMON_FOODS.filter((food) =>
+      removeAccents(food.name).includes(cleanQueryNoAccents)
+    );
+
+    const mappedLocal = localMatches.map((food, idx) => ({
+      id: `local-${idx}-${food.name}`,
+      name: food.name,
+      source: "Local" as const,
+      caloriesPer100g: food.calories,
+      proteinPer100g: food.protein,
+      fatPer100g: food.fat,
+      carbsPer100g: food.carbs,
+    }));
+
+    // 3. Juntar os resultados locais e globais
+    const foods = [...mappedLocal, ...mappedShared];
+
     return NextResponse.json({ foods });
   } catch (error: any) {
+    console.error("Erro na pesquisa de alimentos:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

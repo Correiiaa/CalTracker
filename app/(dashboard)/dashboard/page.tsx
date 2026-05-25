@@ -8,7 +8,8 @@ import {
   Activity, 
   Flame, 
   Apple, 
-  Clock 
+  Clock,
+  Pencil
 } from "lucide-react";
 
 export default async function DashboardPage() {
@@ -302,6 +303,13 @@ export default async function DashboardPage() {
                         timeZone: "Europe/Lisbon"
                       })}
                     </span>
+                    <Link
+                      href={`/meals/edit/${meal.id}`}
+                      className="p-1 rounded-lg text-zinc-500 hover:text-emerald-400 hover:bg-zinc-900 transition-all flex items-center justify-center"
+                      title="Editar Refeição"
+                    >
+                      <Pencil className="h-3.5 w-3.5" />
+                    </Link>
                   </div>
 
                   {/* Lista de alimentos individuais nesta refeição */}
