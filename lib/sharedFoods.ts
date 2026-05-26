@@ -7,15 +7,18 @@ interface FoodItemInput {
   protein: number | string;
   fat: number | string;
   carbs: number | string;
+  unit?: string;
 }
 
 export async function saveSharedFoods(foodItems: FoodItemInput[]) {
   for (const item of foodItems) {
-    const weight = parseFloat(item.weightGrams as string) || 100;
-    if (weight <= 0) continue;
+    const qty = parseFloat(item.weightGrams as string) || 1;
+    if (qty <= 0) continue;
 
-    // Normalizar nutrientes para 100g
-    const factor = 100 / weight;
+    const unit = item.unit === "un" ? "un" : "g";
+
+    // Se for unidade, guardamos os valores por 1 unidade. Se for gramas, por 100g.
+    const factor = unit === "un" ? (1 / qty) : (100 / qty);
     const name = item.name.trim();
     const caloriesPer100g = Math.round((parseFloat(item.calories as string) || 0) * factor * 10) / 10;
     const proteinPer100g = Math.round((parseFloat(item.protein as string) || 0) * factor * 10) / 10;
@@ -23,13 +26,14 @@ export async function saveSharedFoods(foodItems: FoodItemInput[]) {
     const carbsPer100g = Math.round((parseFloat(item.carbs as string) || 0) * factor * 10) / 10;
 
     try {
-      // Procurar por nome de forma case-insensitive
+      // Procurar por nome e unidade de forma case-insensitive no nome
       const existing = await prisma.sharedFood.findFirst({
         where: {
           name: {
             equals: name,
             mode: "insensitive",
           },
+          unit: unit,
         },
       });
 
@@ -49,6 +53,7 @@ export async function saveSharedFoods(foodItems: FoodItemInput[]) {
         await prisma.sharedFood.create({
           data: {
             name,
+            unit,
             caloriesPer100g,
             proteinPer100g,
             fatPer100g,
@@ -57,7 +62,7 @@ export async function saveSharedFoods(foodItems: FoodItemInput[]) {
         });
       }
     } catch (error) {
-      console.error(`Erro ao guardar alimento partilhado "${name}":`, error);
+      console.error(`Erro ao guardar alimento partilhado "${name}" (${unit}):`, error);
     }
   }
 }

@@ -20,6 +20,7 @@ import { COMMON_FOODS } from "@/lib/commonFoods";
 interface FoodItemResult {
   name: string;
   weightGrams: number;
+  unit?: string;
   calories: number;
   protein: number;
   fat: number;
@@ -34,6 +35,7 @@ interface DatabaseSearchResult {
   id: string;
   name: string;
   source: "Local" | "Global";
+  unit?: string;
   caloriesPer100g: number;
   proteinPer100g: number;
   fatPer100g: number;
@@ -45,6 +47,7 @@ interface UnifiedFoodItem {
   id: string;
   name: string;
   source: "Local" | "Histórico" | "Global";
+  unit?: string;
   caloriesPer100g: number;
   proteinPer100g: number;
   fatPer100g: number;
@@ -77,7 +80,7 @@ function UnifiedTableRow({
   item: UnifiedFoodItem; 
   onAdd: (weight: number) => void; 
 }) {
-  const [weight, setWeight] = useState(100);
+  const [weight, setWeight] = useState(item.unit === "un" ? 1 : 100);
 
   let badgeColor = "bg-zinc-800 text-zinc-300";
   if (item.source === "Histórico") {
@@ -91,7 +94,7 @@ function UnifiedTableRow({
   return (
     <tr className="hover:bg-zinc-900/40 border-b border-zinc-900/60 transition-colors">
       <td className="p-3">
-        <div className="font-semibold text-white leading-tight break-words max-w-[220px]">
+        <div className="font-semibold text-white leading-tight break-words max-w-[140px] sm:max-w-[220px]">
           {item.name}
           {item.brandOwner && (
             <span className="text-[10px] text-zinc-500 block font-normal mt-0.5">
@@ -99,11 +102,6 @@ function UnifiedTableRow({
             </span>
           )}
         </div>
-      </td>
-      <td className="p-3 whitespace-nowrap">
-        <span className={`inline-block px-2 py-0.5 rounded-full text-[9px] font-bold ${badgeColor}`}>
-          {item.source}
-        </span>
       </td>
       <td className="p-3 text-center font-bold text-zinc-300">
         {Math.round(item.caloriesPer100g)}
@@ -123,7 +121,7 @@ function UnifiedTableRow({
             onChange={(e) => setWeight(parseFloat(e.target.value) || 0)}
             className="bg-transparent border-none text-white text-xs w-10 text-center focus:outline-none font-semibold p-0"
           />
-          <span className="text-zinc-500 text-[10px] font-bold">g</span>
+          <span className="text-zinc-500 text-[10px] font-bold">{item.unit || "g"}</span>
         </div>
       </td>
       <td className="p-3 text-center">
@@ -149,6 +147,7 @@ export default function MealForm({ initialMeal }: MealFormProps) {
   
   // Estados para alimento personalizado (manual)
   const [customName, setCustomName] = useState("");
+  const [customUnit, setCustomUnit] = useState<"g" | "un">("g");
   const [customWeight, setCustomWeight] = useState<number>(100);
   const [customCaloriesPer100g, setCustomCaloriesPer100g] = useState<number | "">("");
   const [customProteinPer100g, setCustomProteinPer100g] = useState<number | "">("");
@@ -157,6 +156,7 @@ export default function MealForm({ initialMeal }: MealFormProps) {
   
   // Estados para pesquisa
   const [searchQuery, setSearchQuery] = useState("");
+  const [searchTab, setSearchTab] = useState<"history" | "community" | "app">("history");
   const [searchResults, setSearchResults] = useState<DatabaseSearchResult[]>([]);
   const [searching, setSearching] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
@@ -193,18 +193,21 @@ export default function MealForm({ initialMeal }: MealFormProps) {
       setMealDate(formattedDate);
       
       const mappedFoods = initialMeal.foodItems.map(item => {
-        const weight = item.weightGrams || 100;
+        const weight = item.weightGrams || 1;
+        const unit = (item as any).unit || "g";
+        const factor = unit === "un" ? (1 / weight) : (100 / weight);
         return {
           name: item.name,
           weightGrams: weight,
+          unit,
           calories: item.calories,
           protein: item.protein,
           fat: item.fat,
           carbs: item.carbs,
-          caloriesPer100g: (item.calories / weight) * 100,
-          proteinPer100g: (item.protein / weight) * 100,
-          fatPer100g: (item.fat / weight) * 100,
-          carbsPer100g: (item.carbs / weight) * 100,
+          caloriesPer100g: item.calories * factor,
+          proteinPer100g: item.protein * factor,
+          fatPer100g: item.fat * factor,
+          carbsPer100g: item.carbs * factor,
         };
       });
       setFoodItems(mappedFoods);
@@ -279,14 +282,14 @@ export default function MealForm({ initialMeal }: MealFormProps) {
 
   // Pesquisa de alimentos (Local + Global)
   const handleSearch = async () => {
-    if (!searchQuery.trim()) return;
+    const qParam = searchQuery.trim();
 
     setSearching(true);
     setHasSearched(true);
     setAnalysisError(null);
 
     try {
-      const response = await fetch(`/api/foods/search?q=${encodeURIComponent(searchQuery)}`);
+      const response = await fetch(`/api/foods/search?q=${encodeURIComponent(qParam)}`);
       const data = await response.json();
 
       if (!response.ok) {
@@ -301,14 +304,24 @@ export default function MealForm({ initialMeal }: MealFormProps) {
     }
   };
 
+  // Procurar automaticamente com debounce e ao inicializar
+  useEffect(() => {
+    const delayDebounce = setTimeout(() => {
+      handleSearch();
+    }, 300);
+    return () => clearTimeout(delayDebounce);
+  }, [searchQuery]);
+
   // Adicionar alimento da tabela à refeição
   const handleAddUnifiedItem = (item: UnifiedFoodItem, weight: number) => {
     if (weight <= 0) return;
 
-    const factor = weight / 100;
+    const unit = item.unit || "g";
+    const factor = unit === "un" ? weight : (weight / 100);
     const newItem: FoodItemResult = {
       name: item.name,
       weightGrams: weight,
+      unit,
       calories: Math.round(item.caloriesPer100g * factor * 10) / 10,
       protein: Math.round(item.proteinPer100g * factor * 10) / 10,
       fat: Math.round(item.fatPer100g * factor * 10) / 10,
@@ -329,37 +342,46 @@ export default function MealForm({ initialMeal }: MealFormProps) {
       return;
     }
     if (!customWeight || customWeight <= 0) {
-      alert("A quantidade (g) é obrigatória e deve ser maior que 0.");
+      alert("A quantidade é obrigatória e deve ser maior que 0.");
       return;
     }
     if (customCaloriesPer100g === "" || customCaloriesPer100g < 0) {
-      alert("As calorias por 100g são obrigatórias.");
+      alert("As calorias são obrigatórias.");
       return;
     }
 
-    const kcal100 = Number(customCaloriesPer100g);
-    const prot100 = Number(customProteinPer100g) || 0;
-    const fat100 = Number(customFatPer100g) || 0;
-    const carbs100 = Number(customCarbsPer100g) || 0;
+    const qty = customWeight || 1;
+    const totalKcal = Number(customCaloriesPer100g);
+    const totalProt = Number(customProteinPer100g) || 0;
+    const totalFat = Number(customFatPer100g) || 0;
+    const totalCarbs = Number(customCarbsPer100g) || 0;
 
-    const factor = customWeight / 100;
+    // Calcular o valor de base para 100g ou 1 unidade
+    const baseFactor = customUnit === "un" ? (1 / qty) : (100 / qty);
+    const kcalBase = Math.round(totalKcal * baseFactor * 10) / 10;
+    const protBase = Math.round(totalProt * baseFactor * 10) / 10;
+    const fatBase = Math.round(totalFat * baseFactor * 10) / 10;
+    const carbsBase = Math.round(totalCarbs * baseFactor * 10) / 10;
+
     const newItem: FoodItemResult = {
       name: customName,
-      weightGrams: customWeight,
-      calories: Math.round(kcal100 * factor * 10) / 10,
-      protein: Math.round(prot100 * factor * 10) / 10,
-      fat: Math.round(fat100 * factor * 10) / 10,
-      carbs: Math.round(carbs100 * factor * 10) / 10,
-      caloriesPer100g: kcal100,
-      proteinPer100g: prot100,
-      fatPer100g: fat100,
-      carbsPer100g: carbs100,
+      weightGrams: qty,
+      unit: customUnit,
+      calories: totalKcal,
+      protein: totalProt,
+      fat: totalFat,
+      carbs: totalCarbs,
+      caloriesPer100g: kcalBase,
+      proteinPer100g: protBase,
+      fatPer100g: fatBase,
+      carbsPer100g: carbsBase,
     };
 
     setFoodItems((prev) => [...prev, newItem]);
     
     // Limpar formulário manual
     setCustomName("");
+    setCustomUnit("g");
     setCustomWeight(100);
     setCustomCaloriesPer100g("");
     setCustomProteinPer100g("");
@@ -394,13 +416,16 @@ export default function MealForm({ initialMeal }: MealFormProps) {
       }
 
       const preparedFoods = data.foods.map((food: any) => {
-        const weight = food.weightGrams || 100;
+        const weight = food.weightGrams || 1;
+        const unit = food.unit || "g";
+        const factor = unit === "un" ? (1 / weight) : (100 / weight);
         return {
           ...food,
-          caloriesPer100g: (food.calories / weight) * 100,
-          proteinPer100g: (food.protein / weight) * 100,
-          fatPer100g: (food.fat / weight) * 100,
-          carbsPer100g: (food.carbs / weight) * 100,
+          unit,
+          caloriesPer100g: food.calories * factor,
+          proteinPer100g: food.protein * factor,
+          fatPer100g: food.fat * factor,
+          carbsPer100g: food.carbs * factor,
         };
       });
 
@@ -420,7 +445,8 @@ export default function MealForm({ initialMeal }: MealFormProps) {
       prev.map((item, idx) => {
         if (idx !== index) return item;
 
-        const factor = newWeight / 100;
+        const unit = item.unit || "g";
+        const factor = unit === "un" ? newWeight : (newWeight / 100);
         return {
           ...item,
           weightGrams: newWeight,
@@ -453,15 +479,17 @@ export default function MealForm({ initialMeal }: MealFormProps) {
     const newItem: FoodItemResult = {
       name: "Novo Alimento",
       weightGrams: 100,
+      unit: "g",
       calories: 100,
       protein: 5,
       fat: 2,
       carbs: 15,
       caloriesPer100g: 100,
+      proteinPer105: undefined, // ignored, let's keep exact fields
       proteinPer100g: 5,
       fatPer100g: 2,
       carbsPer100g: 15,
-    };
+    } as any;
     setFoodItems((prev) => [...prev, newItem]);
   };
 
@@ -565,17 +593,32 @@ export default function MealForm({ initialMeal }: MealFormProps) {
     brandOwner: food.brandOwner,
   }));
 
-  // Filtrar e juntar alimentos
+  // Filtrar e juntar alimentos baseado na tab selecionada
   let displayedItems: UnifiedFoodItem[] = [];
-  if (!searchQuery.trim()) {
-    // Inicialmente mostra Histórico e depois Local
-    displayedItems = [...historyItems, ...localItems];
-  } else {
-    const q = searchQuery.toLowerCase();
-    const filteredHistory = historyItems.filter((i) => i.name.toLowerCase().includes(q));
-    // Mostra correspondências do histórico e os resultados da API (que contêm locais e globais correspondentes)
-    displayedItems = [...filteredHistory, ...searchItems];
+  if (searchTab === "history") {
+    if (!searchQuery.trim()) {
+      displayedItems = historyItems;
+    } else {
+      const q = searchQuery.toLowerCase();
+      displayedItems = historyItems.filter((i) => i.name.toLowerCase().includes(q));
+    }
+  } else if (searchTab === "community") {
+    // Alimentos da comunidade (resultados globais)
+    displayedItems = searchItems.filter((i) => i.source === "Global");
+  } else if (searchTab === "app") {
+    if (!searchQuery.trim()) {
+      displayedItems = localItems;
+    } else {
+      const q = searchQuery.toLowerCase();
+      displayedItems = localItems.filter((i) => i.name.toLowerCase().includes(q));
+    }
   }
+
+  const historyCount = historyItems.length;
+  const communityCount = searchItems.filter((i) => i.source === "Global").length;
+  const appCount = searchQuery.trim()
+    ? localItems.filter((i) => i.name.toLowerCase().includes(searchQuery.toLowerCase())).length
+    : localItems.length;
 
   // Calcular totais em tempo real
   const totalCalories = Math.round(foodItems.reduce((acc, cur) => acc + cur.calories, 0));
@@ -731,31 +774,67 @@ export default function MealForm({ initialMeal }: MealFormProps) {
                   </div>
                 </div>
 
-                {/* Tabela Unificada de Resultados (Histórico, Local, USDA) */}
-                <div className="space-y-2 border-t border-zinc-800/80 pt-4">
-                  <h3 className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                    <UtensilsCrossed className="h-3.5 w-3.5 text-emerald-400" />
-                    Lista de Alimentos Disponíveis
-                  </h3>
-                  
+                {/* Tabela com 3 Separadores: Histórico, Comunidade, App */}
+                <div className="space-y-3 border-t border-zinc-800/80 pt-4">
+                  {/* Tab Buttons */}
+                  <div className="flex gap-1 bg-zinc-950 border border-zinc-800 rounded-2xl p-1">
+                    {(
+                      [
+                        { key: "history", label: "Histórico", count: historyCount, color: "text-emerald-400" },
+                        { key: "community", label: "Comunidade", count: communityCount, color: "text-indigo-400" },
+                        { key: "app", label: "Predefinidos", count: appCount, color: "text-orange-400" },
+                      ] as const
+                    ).map(({ key, label, count, color }) => (
+                      <button
+                        key={key}
+                        type="button"
+                        onClick={() => setSearchTab(key)}
+                        className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-[10px] font-bold transition-all ${
+                          searchTab === key
+                            ? "bg-zinc-900 shadow-md border border-zinc-800 " + color
+                            : "text-zinc-500 hover:text-zinc-300"
+                        }`}
+                      >
+                        {label}
+                        <span className={`inline-flex items-center justify-center min-w-[16px] h-4 text-[9px] font-bold rounded-full px-1 ${
+                          searchTab === key ? "bg-zinc-800 " + color : "bg-zinc-900 text-zinc-600"
+                        }`}>
+                          {count}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+
                   <div className="border border-zinc-800 rounded-2xl overflow-hidden bg-zinc-950">
                     <div className="overflow-x-auto max-h-[350px]">
                       <table className="w-full text-left border-collapse text-[11px]">
                         <thead>
                           <tr className="bg-zinc-900 border-b border-zinc-850 text-zinc-400 font-semibold">
                             <th className="p-3">Alimento</th>
-                            <th className="p-3">Origem</th>
                             <th className="p-3 text-center">Kcal</th>
                             <th className="p-3 text-center hidden md:table-cell">Macros (P/H/G)</th>
-                            <th className="p-3 text-center" style={{ width: "90px" }}>Peso</th>
+                            <th className="p-3 text-center" style={{ width: "90px" }}>Qtd.</th>
                             <th className="p-3 text-center" style={{ width: "40px" }}></th>
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-zinc-900">
-                          {displayedItems.length === 0 ? (
+                          {searching ? (
                             <tr>
-                              <td colSpan={6} className="p-8 text-center text-zinc-500">
-                                Nenhum alimento encontrado. Insira um alimento manualmente.
+                              <td colSpan={5} className="p-8 text-center text-zinc-500">
+                                <span className="flex items-center justify-center gap-2">
+                                  <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/></svg>
+                                  A carregar alimentos...
+                                </span>
+                              </td>
+                            </tr>
+                          ) : displayedItems.length === 0 ? (
+                            <tr>
+                              <td colSpan={5} className="p-8 text-center text-zinc-500">
+                                {searchTab === "history"
+                                  ? "Ainda não há histórico. Registe uma refeição primeiro."
+                                  : searchTab === "community"
+                                  ? "Ainda não há alimentos da comunidade disponíveis."
+                                  : "Nenhum alimento encontrado."}
                               </td>
                             </tr>
                           ) : (
@@ -791,22 +870,59 @@ export default function MealForm({ initialMeal }: MealFormProps) {
                   />
                 </div>
 
+                {/* Seletor de Unidade de Medida */}
+                <div>
+                  <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1">
+                    Unidade de Medida
+                  </label>
+                  <div className="grid grid-cols-2 gap-1 bg-zinc-950 p-1 rounded-2xl border border-zinc-800/80">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setCustomUnit("g");
+                        if (customWeight === 1 || customWeight === 0) setCustomWeight(100);
+                      }}
+                      className={`py-1.5 rounded-xl text-xs font-bold transition-all ${
+                        customUnit === "g"
+                          ? "bg-zinc-900 text-emerald-400 border border-zinc-800"
+                          : "text-zinc-500 hover:text-zinc-300"
+                      }`}
+                    >
+                      Gramas (g)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setCustomUnit("un");
+                        if (customWeight === 100 || customWeight === 0) setCustomWeight(1);
+                      }}
+                      className={`py-1.5 rounded-xl text-xs font-bold transition-all ${
+                        customUnit === "un"
+                          ? "bg-zinc-900 text-emerald-400 border border-zinc-800"
+                          : "text-zinc-500 hover:text-zinc-300"
+                      }`}
+                    >
+                      Unidades (un)
+                    </button>
+                  </div>
+                </div>
+
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1">
-                      Quantidade a consumir (g) <span className="text-red-500">*</span>
+                      {customUnit === "un" ? "Quantidade a consumir (un)" : "Quantidade a consumir (g)"} <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="number"
                       value={customWeight || ""}
                       onChange={(e) => setCustomWeight(parseFloat(e.target.value) || 0)}
                       className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2.5 text-zinc-100 text-base md:text-xs focus:outline-none focus:border-emerald-500 transition-colors"
-                      placeholder="Ex: 100"
+                      placeholder={customUnit === "un" ? "Ex: 1" : "Ex: 100"}
                     />
                   </div>
                   <div>
                     <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1">
-                      Calorias (kcal por 100g) <span className="text-red-500">*</span>
+                      Calorias (kcal totais) <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="number"
@@ -816,7 +932,7 @@ export default function MealForm({ initialMeal }: MealFormProps) {
                         setCustomCaloriesPer100g(val === "" ? "" : parseFloat(val));
                       }}
                       className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2.5 text-zinc-100 text-base md:text-xs focus:outline-none focus:border-emerald-500 transition-colors"
-                      placeholder="Ex: 350"
+                      placeholder="Ex: 250"
                     />
                   </div>
                 </div>
@@ -824,7 +940,7 @@ export default function MealForm({ initialMeal }: MealFormProps) {
                 <div className="grid grid-cols-3 gap-2">
                   <div>
                     <label className="block text-[10px] font-semibold text-zinc-400 uppercase tracking-wider mb-1">
-                      Prot (g/100g)
+                      Prot (g totais)
                     </label>
                     <input
                       type="number"
@@ -834,12 +950,12 @@ export default function MealForm({ initialMeal }: MealFormProps) {
                         setCustomProteinPer100g(val === "" ? "" : parseFloat(val));
                       }}
                       className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-2 py-2.5 text-zinc-100 text-base md:text-xs focus:outline-none focus:border-emerald-500 transition-colors"
-                      placeholder="Ex: 25"
+                      placeholder="Ex: 15"
                     />
                   </div>
                   <div>
                     <label className="block text-[10px] font-semibold text-zinc-400 uppercase tracking-wider mb-1">
-                      HC (g/100g)
+                      HC (g totais)
                     </label>
                     <input
                       type="number"
@@ -849,12 +965,12 @@ export default function MealForm({ initialMeal }: MealFormProps) {
                         setCustomCarbsPer100g(val === "" ? "" : parseFloat(val));
                       }}
                       className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-2 py-2.5 text-zinc-100 text-base md:text-xs focus:outline-none focus:border-emerald-500 transition-colors"
-                      placeholder="Ex: 5"
+                      placeholder="Ex: 20"
                     />
                   </div>
                   <div>
                     <label className="block text-[10px] font-semibold text-zinc-400 uppercase tracking-wider mb-1">
-                      Gord (g/100g)
+                      Gord (g totais)
                     </label>
                     <input
                       type="number"
@@ -1023,7 +1139,7 @@ export default function MealForm({ initialMeal }: MealFormProps) {
                                 onChange={(e) => handleWeightChange(index, parseFloat(e.target.value) || 0)}
                                 className="bg-transparent border-none text-white text-xs w-12 text-center focus:outline-none font-semibold p-0"
                               />
-                              <span className="text-zinc-500 text-[10px] font-bold">g</span>
+                              <span className="text-zinc-500 text-[10px] font-bold">{item.unit || "g"}</span>
                             </div>
                           </div>
                         </div>

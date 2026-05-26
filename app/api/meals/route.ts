@@ -38,6 +38,7 @@ export async function POST(request: Request) {
           create: foodItems.map((item) => ({
             name: item.name,
             weightGrams: parseFloat(item.weightGrams) || 0,
+            unit: item.unit || "g",
             calories: parseFloat(item.calories) || 0,
             protein: parseFloat(item.protein) || 0,
             fat: parseFloat(item.fat) || 0,

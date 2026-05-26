@@ -23,6 +23,7 @@ export interface NutrientData {
 export interface FinalFoodItem {
   name: string;
   weightGrams: number;
+  unit?: string;
   calories: number;
   protein: number;
   fat: number;
@@ -72,7 +73,7 @@ export async function parseMealText(text: string): Promise<ParsedFoodItem[]> {
 }
 
 // 2. Análise de Imagem (Multimodal)
-export async function analyzeMealImage(base64Image: string): Promise<{ foods: ParsedFoodItem[]; confidence: number }> {
+export async function analyzeMealImage(base64Image: string): Promise<{ foods: FinalFoodItem[]; confidence: number }> {
   // O base64Image pode vir com o prefixo "data:image/jpeg;base64,"
   const base64Data = base64Image.replace(/^data:image\/\w+;base64,/, "");
 
@@ -84,18 +85,27 @@ export async function analyzeMealImage(base64Image: string): Promise<{ foods: Pa
   };
 
   const prompt = `
-    Analise a imagem desta refeição. Identifique todos os alimentos visíveis no prato ou copo.
-    Estime o peso aproximado em gramas de cada porção visível.
-    Forneça também uma tradução detalhada em inglês para pesquisa na API do USDA (ex: 'grilled chicken breast', 'cooked white rice', etc).
+    Analise a imagem desta refeição. Identifique todos os alimentos e bebidas visíveis no prato ou copo.
+    Estime a quantidade em peso (gramas) ou unidades (ex: 'un' para alimentos individuais como um gelado, uma fatia de pão de forma, uma bolacha, um rebuçado, etc) de cada porção visível.
+    Estime diretamente os valores nutricionais de cada alimento para a quantidade visível:
+    - calorias (kcal)
+    - proteínas (g)
+    - gorduras (g)
+    - hidratos de carbono (g)
+    
     Forneça uma estimativa de confiança geral na sua identificação (entre 0 e 1).
 
     Devolva APENAS um objeto JSON no seguinte formato:
     {
       "foods": [
         {
-          "originalName": "nome em português",
-          "englishQuery": "nome detalhado em inglês para pesquisa no USDA",
-          "weightGrams": 150
+          "name": "nome do alimento em português",
+          "weightGrams": 150, // peso em gramas ou número de unidades
+          "unit": "g", // "g" ou "un"
+          "calories": 250,
+          "protein": 15.2,
+          "fat": 8.1,
+          "carbs": 30.5
         }
       ],
       "confidence": 0.85

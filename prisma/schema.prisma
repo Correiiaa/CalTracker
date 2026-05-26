@@ -19,6 +19,7 @@ model User {
   goal          String       // e.g. "perder", "manter", "ganhar"
   dailyCalories Int          // target daily calories
   autoCalories  Boolean      @default(true)
+  lastWeightCheckIn DateTime? // last weekly weight check-in
   meals         Meal[]
   aiAnalyses    AIAnalysis[]
   createdAt     DateTime     @default(now())
@@ -40,7 +41,8 @@ model FoodItem {
   id          String   @id @default(cuid())
   mealId      String
   name        String
-  weightGrams Float
+  weightGrams Float    // quantity/weight
+  unit        String   @default("g")
   calories    Float    // calculated for this weight
   protein     Float    // calculated for this weight
   fat         Float    // calculated for this weight
@@ -61,12 +63,14 @@ model AIAnalysis {
 
 model SharedFood {
   id              String   @id @default(cuid())
-  name            String   @unique
+  name            String
+  unit            String   @default("g")
   caloriesPer100g Float
   proteinPer100g  Float
   fatPer100g      Float
   carbsPer100g    Float
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
-}
 
+  @@unique([name, unit])
+}

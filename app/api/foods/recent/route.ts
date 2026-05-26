@@ -27,12 +27,14 @@ export async function GET() {
         const lowerName = item.name.trim().toLowerCase();
         if (uniqueFoodsMap.has(lowerName)) continue;
 
-        // Converter macros de volta para "por 100g" para re-uso flexível no cliente
-        const weight = item.weightGrams || 100;
-        const factor = 100 / weight;
+        // Converter macros de volta para "por 100g" ou "por 1 unidade" para re-uso flexível no cliente
+        const weight = item.weightGrams || 1;
+        const unit = item.unit || "g";
+        const factor = unit === "un" ? (1 / weight) : (100 / weight);
 
         uniqueFoodsMap.set(lowerName, {
           name: item.name,
+          unit,
           caloriesPer100g: Math.round(item.calories * factor * 10) / 10,
           proteinPer100g: Math.round(item.protein * factor * 10) / 10,
           fatPer100g: Math.round(item.fat * factor * 10) / 10,

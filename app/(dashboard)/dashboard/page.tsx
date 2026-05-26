@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { DashboardCheckIn } from "@/components/DashboardCheckIn";
 import { 
   Plus, 
   ChevronRight, 
@@ -86,6 +87,13 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-8 animate-fade-in">
+      {/* Modal de Check-in Semanal de Peso */}
+      <DashboardCheckIn
+        currentWeight={user.weight}
+        lastWeightCheckIn={user.lastWeightCheckIn ? user.lastWeightCheckIn.toISOString() : null}
+        createdAt={user.createdAt.toISOString()}
+      />
+
       {/* Secção de Saudação */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>

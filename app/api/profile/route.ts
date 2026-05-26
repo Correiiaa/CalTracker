@@ -62,6 +62,7 @@ export async function PUT(request: Request) {
         goal,
         dailyCalories: targetCalories,
         autoCalories: isAuto,
+        lastWeightCheckIn: new Date(),
       },
       select: {
         id: true,

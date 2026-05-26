@@ -56,6 +56,7 @@ export async function getCurrentUser() {
         goal: true,
         dailyCalories: true,
         autoCalories: true,
+        lastWeightCheckIn: true,
         createdAt: true,
       },
     });

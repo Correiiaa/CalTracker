@@ -13,7 +13,25 @@ export async function GET(request: Request) {
   const query = searchParams.get("q");
 
   if (!query || !query.trim()) {
-    return NextResponse.json({ foods: [] });
+    try {
+      const latestShared = await prisma.sharedFood.findMany({
+        orderBy: { id: "desc" },
+        take: 20,
+      });
+      const mappedShared = latestShared.map((food) => ({
+        id: food.id,
+        name: food.name,
+        source: "Global" as const,
+        unit: food.unit,
+        caloriesPer100g: food.caloriesPer100g,
+        proteinPer100g: food.proteinPer100g,
+        fatPer100g: food.fatPer100g,
+        carbsPer100g: food.carbsPer100g,
+      }));
+      return NextResponse.json({ foods: mappedShared });
+    } catch (err: any) {
+      return NextResponse.json({ foods: [] });
+    }
   }
 
   const cleanQuery = query.trim().toLowerCase();
@@ -34,6 +52,7 @@ export async function GET(request: Request) {
       id: food.id,
       name: food.name,
       source: "Global" as const,
+      unit: food.unit,
       caloriesPer100g: food.caloriesPer100g,
       proteinPer100g: food.proteinPer100g,
       fatPer100g: food.fatPer100g,
@@ -54,6 +73,7 @@ export async function GET(request: Request) {
       id: `local-${idx}-${food.name}`,
       name: food.name,
       source: "Local" as const,
+      unit: "g" as const,
       caloriesPer100g: food.calories,
       proteinPer100g: food.protein,
       fatPer100g: food.fat,

@@ -115,11 +115,25 @@ export async function POST(request: Request) {
         },
       });
 
-      // Processar os alimentos encontrados pelo motor nutricional (USDA + Fallback + Contas)
-      const analysisResult = await processNutritionAnalysis(foods);
+      // Calcular totais
+      let totalCalories = 0;
+      let totalProtein = 0;
+      let totalFat = 0;
+      let totalCarbs = 0;
+
+      for (const food of foods) {
+        totalCalories += food.calories || 0;
+        totalProtein += food.protein || 0;
+        totalFat += food.fat || 0;
+        totalCarbs += food.carbs || 0;
+      }
 
       return NextResponse.json({
-        ...analysisResult,
+        foods,
+        totalCalories: Math.round(totalCalories),
+        totalProtein: Math.round(totalProtein * 10) / 10,
+        totalFat: Math.round(totalFat * 10) / 10,
+        totalCarbs: Math.round(totalCarbs * 10) / 10,
         imageUrl,
         confidence,
       });
